@@ -55,6 +55,7 @@ func Configure(options map[string]string) {
 			MaxIdle:     poolSize,
 			IdleTimeout: 240 * time.Second,
 			Dial: func() (redis.Conn, error) {
+				var c redis.Conn
 				if options["server"] != "" {
 					c, err := redis.Dial("tcp", options["server"])
 					if err != nil {
