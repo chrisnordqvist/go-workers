@@ -60,7 +60,7 @@ func Configure(options map[string]string) {
 				var err error
 
 				if options["server"] != "" {
-					c, err := redis.Dial("tcp", options["server"])
+					c, err = redis.Dial("tcp", options["server"])
 					if err != nil {
 						return nil, err
 					}
@@ -73,7 +73,7 @@ func Configure(options map[string]string) {
 					}
 
 				} else {
-					c, err := redis.DialURL(options["uri"])
+					c, err = redis.DialURL(options["uri"])
 					if err != nil {
 						return nil, err
 					}
