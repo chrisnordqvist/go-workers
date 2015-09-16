@@ -22,9 +22,14 @@ func Configure(options map[string]string) {
 	var namespace string
 	var pollInterval int
 
-	if options["server"] == "" {
-		panic("Configure requires a 'server' option, which identifies a Redis instance")
+	if options["server"] == "" && options["uri"] == "" {
+		panic("Configure requires a 'server' or 'uri' option, which identifies a Redis instance")
 	}
+
+	if options["server"] != "" && options["uri"] != "" {
+		panic("Please only provide 'uri' or 'server'")
+	}
+
 	if options["process"] == "" {
 		panic("Configure requires a 'process' option, which uniquely identifies this instance")
 	}
@@ -50,16 +55,26 @@ func Configure(options map[string]string) {
 			MaxIdle:     poolSize,
 			IdleTimeout: 240 * time.Second,
 			Dial: func() (redis.Conn, error) {
-				c, err := redis.Dial("tcp", options["server"])
-				if err != nil {
-					return nil, err
-				}
-				if options["password"] != "" {
-					if _, err := c.Do("AUTH", options["password"]); err != nil {
-						c.Close()
+				if options["server"] != "" {
+					c, err := redis.Dial("tcp", options["server"])
+					if err != nil {
+						return nil, err
+					}
+
+					if options["password"] != "" {
+						if _, err := c.Do("AUTH", options["password"]); err != nil {
+							c.Close()
+							return nil, err
+						}
+					}
+
+				} else {
+					c, err := redis.DialURL(options["uri"])
+					if err != nil {
 						return nil, err
 					}
 				}
+
 				if options["database"] != "" {
 					if _, err := c.Do("SELECT", options["database"]); err != nil {
 						c.Close()
