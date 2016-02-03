@@ -22,9 +22,13 @@ func ConfigureWithPool(pool *redis.Pool){
 		"1",
 		"workers:",
 		15,
-		pool
+		pool,
+		func(queue string) Fetcher {
+			return NewFetch(queue, make(chan *Msg), make(chan bool))
+		},
 	}
 }
+
 
 func Configure(options map[string]string) {
 	var poolSize int

@@ -46,7 +46,7 @@ func ConfigSpec(c gospec.Context) {
 			Configure(map[string]string{"process": "2"})
 		})
 
-		c.Expect(err, Equals, "Configure requires a 'server' option, which identifies a Redis instance")
+		c.Expect(err, Equals, "Configure requires a 'server' or 'uri' option, which identifies a Redis instance")
 	})
 
 	c.Specify("requires a process parameter", func() {
