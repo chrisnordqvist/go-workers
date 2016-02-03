@@ -17,6 +17,15 @@ type config struct {
 
 var Config *config
 
+func ConfigureWithPool(pool *redis.Pool){
+	Config = &config{
+		"1",
+		"workers:",
+		15,
+		pool
+	}
+}
+
 func Configure(options map[string]string) {
 	var poolSize int
 	var namespace string
@@ -55,7 +64,7 @@ func Configure(options map[string]string) {
 			MaxIdle:     poolSize,
 			IdleTimeout: 240 * time.Second,
 			Dial: func() (redis.Conn, error) {
-				
+
 				var c redis.Conn
 				var err error
 
